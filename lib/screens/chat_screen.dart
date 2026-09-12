@@ -134,17 +134,20 @@ class _ChatScreenState extends State<ChatScreen> {
     if (mounted) setState(() {});
   }
 
-  void _showMemory() {
+  void _showProfile() {
     showGeneralDialog<void>(
       context: context,
       barrierDismissible: true,
-      barrierLabel: '关闭长期记忆',
+      barrierLabel: '关闭角色资料',
       barrierColor: Colors.black.withValues(alpha: 0.68),
       transitionDuration: const Duration(milliseconds: 230),
       pageBuilder: (dialogContext, _, _) => SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 460),
+            constraints: BoxConstraints(
+              maxWidth: 500,
+              maxHeight: MediaQuery.sizeOf(dialogContext).height * 0.82,
+            ),
             child: Padding(
               padding: const EdgeInsets.all(22),
               child: Material(
@@ -153,19 +156,18 @@ class _ChatScreenState extends State<ChatScreen> {
                   borderRadius: 28,
                   padding: const EdgeInsets.all(22),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
                           const GlassIconBadge(
-                            icon: CupertinoIcons.book,
+                            icon: CupertinoIcons.person_crop_circle,
                             accent: true,
                           ),
                           const SizedBox(width: 14),
                           Expanded(
                             child: Text(
-                              '长期记忆',
+                              widget.persona.name,
                               style: Theme.of(
                                 dialogContext,
                               ).textTheme.titleLarge,
@@ -179,13 +181,32 @@ class _ChatScreenState extends State<ChatScreen> {
                         ],
                       ),
                       const SizedBox(height: 20),
-                      ConstrainedBox(
-                        constraints: const BoxConstraints(maxHeight: 360),
+                      Expanded(
                         child: SingleChildScrollView(
-                          child: SelectableText(
-                            _memory.isEmpty ? '还没有形成长期记忆。' : _memory,
-                            style: Theme.of(dialogContext).textTheme.bodyLarge
-                                ?.copyWith(color: AppColors.textSecondary),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _ProfileSection(
+                                label: '性格',
+                                value: widget.persona.personality,
+                              ),
+                              const SizedBox(height: 12),
+                              _ProfileSection(
+                                label: '说话风格',
+                                value: widget.persona.speakingStyle,
+                              ),
+                              const SizedBox(height: 12),
+                              _ProfileSection(
+                                label: '背景故事',
+                                value: widget.persona.background,
+                              ),
+                              const SizedBox(height: 12),
+                              _ProfileSection(
+                                label: '长期记忆',
+                                value: _memory.isEmpty ? '还没有形成长期记忆。' : _memory,
+                                accent: true,
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -236,7 +257,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 children: [
                   _ChatHeader(
                     name: widget.persona.name,
-                    onMemory: _showMemory,
+                    onMemory: _showProfile,
                     onSettings: _openSettings,
                   ),
                   Padding(
@@ -337,6 +358,55 @@ class _ChatHeader extends StatelessWidget {
             icon: CupertinoIcons.slider_horizontal_3,
             tooltip: 'API 设置',
             onPressed: onSettings,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProfileSection extends StatelessWidget {
+  const _ProfileSection({
+    required this.label,
+    required this.value,
+    this.accent = false,
+  });
+
+  final String label;
+  final String value;
+  final bool accent;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: accent
+            ? AppColors.accent.withValues(alpha: 0.085)
+            : Colors.black.withValues(alpha: 0.16),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: accent
+              ? AppColors.accent.withValues(alpha: 0.14)
+              : Colors.white.withValues(alpha: 0.045),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              color: accent ? AppColors.accent : AppColors.textTertiary,
+            ),
+          ),
+          const SizedBox(height: 8),
+          SelectableText(
+            value,
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
           ),
         ],
       ),
