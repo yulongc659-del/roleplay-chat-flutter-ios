@@ -1,7 +1,7 @@
-import 'package:path/path.dart' as p;
-import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common/sqlite_api.dart';
 
 import '../models/chat_models.dart';
+import 'database_platform.dart';
 
 class AppDatabase {
   AppDatabase._(this._database);
@@ -12,9 +12,8 @@ class AppDatabase {
     DatabaseFactory? factory,
     String? path,
   }) async {
-    final selectedFactory = factory ?? databaseFactory;
-    final databasePath =
-        path ?? p.join(await getDatabasesPath(), 'roleplay.sqlite3');
+    final selectedFactory = factory ?? platformDatabaseFactory;
+    final databasePath = path ?? await platformDatabasePath();
     final database = await selectedFactory.openDatabase(
       databasePath,
       options: OpenDatabaseOptions(
@@ -98,7 +97,7 @@ class AppDatabase {
     final result = await _database.rawQuery(
       'SELECT COUNT(*) AS count FROM messages',
     );
-    return Sqflite.firstIntValue(result) ?? 0;
+    return result.first['count'] as int? ?? 0;
   }
 
   Future<void> addTurn(String user, String assistant) async {

@@ -1,6 +1,6 @@
 # Roleplay Chat（Flutter / iOS）
 
-本地优先的 AI 角色扮演聊天 App。界面使用 Flutter，消息、长期记忆和关系数值保存在设备内的 SQLite；支持 OpenAI、DeepSeek 和自定义 OpenAI 兼容接口。
+本地优先的 AI 角色扮演聊天 App。界面使用 Flutter，消息、长期记忆和关系数值保存在设备内的 SQLite；支持 iOS 和浏览器测试，以及 OpenAI、DeepSeek 和自定义 OpenAI 兼容接口。
 
 ## 已实现
 
@@ -21,6 +21,18 @@ flutter test
 ```
 
 测试使用内存 SQLite 和模拟 API，不会产生真实 API 费用。
+
+## 浏览器测试
+
+```bash
+flutter pub get
+dart run sqflite_common_ffi_web:setup
+flutter run -d chrome --web-port=7357
+```
+
+浏览器版使用 SQLite WASM，并把数据持久化到 IndexedDB。调试时建议固定使用 `7357` 端口，因为不同端口拥有相互独立的浏览器存储。
+
+浏览器只能作为本地开发测试环境：API Key 会存在客户端，并且服务商接口可能限制浏览器跨域请求。正式分发仍建议使用 iOS App，或通过自己的后端代理调用模型 API。
 
 ## GitHub Actions 构建
 

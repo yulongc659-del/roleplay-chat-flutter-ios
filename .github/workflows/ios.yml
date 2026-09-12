@@ -1,4 +1,4 @@
-name: Test and build iOS
+name: Test and build Flutter
 
 on:
   push:
@@ -20,6 +20,7 @@ jobs:
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
+      - run: flutter build web --release
 
   unsigned-ios:
     needs: test
